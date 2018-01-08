@@ -4,16 +4,23 @@
       Add Städtetrip
     </ion-title>
   </ion-navbar>
-
 </ion-header>
 
 <ion-content padding>
 
     <ion-item style="width: 74%;float: left;">
       <ion-label floating>Stadt...</ion-label>
-      <ion-input type="text"></ion-input>
+      <ion-input type="text" [(ngModel)]="searchString"></ion-input>
     </ion-item>
 
-    <button style="width: 24%;margin-top: 32px;float: right;" ion-button>Suchen</button>
+    <button id="searchButton" ion-button style="width: 24%;margin-top: 32px;float: right;" (click)="search()">Suchen</button>
+
+    <ion-item id="weather" style="visibility: hidden">
+      <ion-img width="50" height="50" src="{{weather.icon}}"></ion-img>
+      <p style="display: inline-block; font-size: 45px;    margin: 0px 5%;">
+        {{weather.nowTemp}} °C
+      </p>
+
+    </ion-item>
 
 </ion-content>
