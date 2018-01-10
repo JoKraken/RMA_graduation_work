@@ -16,10 +16,18 @@
     <button id="searchButton" ion-button style="width: 24%;margin-top: 32px;float: right;" (click)="search()">Suchen</button>
 
     <ion-item id="weather" style="visibility: hidden">
-      <ion-img width="50" height="50" src="{{weather.icon}}"></ion-img>
-      <p style="display: inline-block; font-size: 45px;    margin: 0px 5%;">
-        {{weather.nowTemp}} °C
-      </p>
+      <div *ngFor="let weather of weatherArray" style="border-bottom: 1px solid #ccc!important;">
+        <p style="width: 55px;display: inline-block; font-size: 30px;margin: 0px 5%;">
+          {{weather.date.weekday_short}}
+        </p>
+        <ion-img  src="http://icons.wxug.com/i/c/k/{{weather.icon}}.gif" width="50" height="50"></ion-img>
+        <p style="display: inline-block; font-size: 30px;margin: 0px 5%;">
+          {{weather.high.celsius}} °C
+        </p>
+        <p style="display: inline-block; font-size: 30px;margin: 0px 5%;color: #bababa !important;">
+          {{weather.low.celsius}} °C
+        </p>
+      </div>
 
     </ion-item>
 
