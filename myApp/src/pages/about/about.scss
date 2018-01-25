@@ -1,3 +1,32 @@
 page-about {
 
 }
+
+.country{
+  display: none;
+}
+
+.weather{
+  min-width: 97.3px;
+  padding: 10px;
+  border-bottom: 1px solid #ccc!important;
+}
+
+.weatherFirst{
+
+}
+
+.weatherNotFirst{
+  display: inline-block;
+  text-align: center;
+}
+
+.temp{
+  max-width: 60px;
+  font-size: 25px !important;
+  margin: 0px 5%;
+}
+
+.templow{
+  color: #bababa !important;
+}

@@ -8,27 +8,49 @@
 
 <ion-content padding>
 
-    <ion-item style="width: 74%;float: left;">
-      <ion-label floating>Stadt...</ion-label>
-      <ion-input type="text" [(ngModel)]="searchString"></ion-input>
-    </ion-item>
 
-    <button id="searchButton" ion-button style="width: 24%;margin-top: 32px;float: right;" (click)="search()">Suchen</button>
+    <ion-searchbar (ionInput)="search($event)">Stadt...</ion-searchbar>
 
-    <ion-item id="weather" style="visibility: hidden">
-      <div *ngFor="let weather of weatherArray" style="border-bottom: 1px solid #ccc!important;">
-        <p style="width: 55px;display: inline-block; font-size: 30px;margin: 0px 5%;">
-          {{weather.date.weekday_short}}
-        </p>
-        <ion-img  src="http://icons.wxug.com/i/c/k/{{weather.icon}}.gif" width="50" height="50"></ion-img>
-        <p style="display: inline-block; font-size: 30px;margin: 0px 5%;">
-          {{weather.high.celsius}} °C
-        </p>
-        <p style="display: inline-block; font-size: 30px;margin: 0px 5%;color: #bababa !important;">
-          {{weather.low.celsius}} °C
-        </p>
-      </div>
+    <div class="country">
+      <p style="padding-left: 16px;">Bitte wähle ein Land aus</p>
+      <ion-item ng-click="onclickCountry()">
+        <ion-label>Land</ion-label>
+        <ion-select [(ngModel)]="country">
+          <ion-option *ngFor="let country of countryArray" value="/{{country.country_name}}">{{country.country_name}} ({{country.state}})</ion-option>
+        </ion-select>
+      </ion-item>
+    </div>
 
-    </ion-item>
+    <div id="weather" class="item-block" style="visibility: hidden">
+      <ion-card>
+        <ion-card-header>
+          Wetter: {{searchString}}
+        </ion-card-header>
+        <ion-card-content>
+          <div *ngFor="let weather of weatherArray" class="weather weatherNotFirst">
+            <p style="width: 60px; font-size: 30px;margin: 0px 5%;">
+              {{weather.date.weekday_short}}
+            </p>
+            <img src="{{weather.icon_url}}" style="max-width: 77px;">
+            <p class="temp">
+              {{weather.high.celsius}} °C
+            </p>
+            <p class="temp templow">
+              {{weather.low.celsius}} °C
+            </p>
+            <div  class="additive" style="font-size: 15px;margin: 0px 5%;color: #bababa !important; display: none">
+              <p class="temp" style="    display: inline-block;">{{weather.high.celsius}} °C <br> {{weather.low.celsius}} °C </p>
+              <p style="float: right;display: inline-block;">
+                Niederschlag: {{weather.pop}} % <br>
+                Luftfeuchtigkeit: {{weather.avehumidity}} % <br>
+                Wind: {{weather.avewind.kph}} km/h
+              </p>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+
+    </div>
 
 </ion-content>
