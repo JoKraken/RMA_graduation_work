@@ -13,9 +13,9 @@
 
     <div class="country">
       <p style="padding-left: 16px;">Bitte wähle ein Land aus</p>
-      <ion-item ng-click="onclickCountry()">
+      <ion-item>
         <ion-label>Land</ion-label>
-        <ion-select [(ngModel)]="country">
+        <ion-select [(ngModel)]="country" (click)="onclickCountry()">
           <ion-option *ngFor="let country of countryArray" value="/{{country.country_name}}">{{country.country_name}} ({{country.state}})</ion-option>
         </ion-select>
       </ion-item>
@@ -53,9 +53,20 @@
       <ion-card>
         <ion-card-header>
           Route: {{searchString}}
+          <div class="mode" style="width: 68%;display: inline-block;">
+            <ion-item>
+              <ion-label>Fortbewegung...</ion-label>
+              <ion-select id="mode" [(ngModel)]="modeString" (click)="onclickMode()">
+                <ion-option *ngFor="let mode of mode" value="{{mode.value}}">{{mode.name}}</ion-option>
+              </ion-select>
+            </ion-item>
+          </div>
         </ion-card-header>
           <div #map id="map"></div>
         <ion-card-content>
+          <div id="routeSettings">
+            {{routeString}}
+          </div>
           <div id="noGPS" style="margin: 5%; display: none">
             Um die Map anzuzeigen, aktivere das GSP in den Einstellungen
           </div>

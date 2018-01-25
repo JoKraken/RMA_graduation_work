@@ -15,6 +15,11 @@ declare var google: any;
   templateUrl: 'about.html'
 })
 export class AboutPage {
+  mode = [{name: "Auto", value: "DRIVING"},
+          {name: "Laufen", value: "WALKING"},
+          {name: "Öffentlich", value: "TRANSIT"}];
+  modeString = "DRIVING";
+  routeString ="";
   @ViewChild('map') mapElement: ElementRef;
   map: any;
   geocoder;
@@ -36,9 +41,7 @@ export class AboutPage {
     private geolocation: Geolocation
   ) {}
 
-  ionViewWillEnter(){
-    this.loadMap();
-  }
+  ionViewWillEnter(){}
 
   search(ev: any){
     this.countSearch++;
@@ -88,16 +91,10 @@ export class AboutPage {
   }
 
   onclickCountry(){
-    console.log("test");
+    console.log("country");
     setTimeout(()=>{
-      console.log("test2");
-      document.getElementsByClassName("alert-button")[1].addEventListener("click", function(event){
-        setTimeout(()=>{
-          console.log("test3");
-          this.search();
-        }, 1000);
-        });
-    }, 2000);
+      this.search();
+    }, 4000);
   }
 
   loadMap(){
@@ -118,10 +115,42 @@ export class AboutPage {
         position: latLng
       });
 
-      this.initializeRoute();
+      // this.initializeRoute();
+      this.startNavigating(position);
     }, (err) => {
       console.log(err);
     });
+  }
+
+  startNavigating(position){
+    let directionsService = new google.maps.DirectionsService;
+    let directionsDisplay = new google.maps.DirectionsRenderer;
+    directionsDisplay.setMap(this.map);
+
+    console.log(this.modeString);
+    directionsService.route({
+        origin: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+        destination: new google.maps.LatLng(position.coords.latitude-2, position.coords.longitude-2),
+        travelMode: google.maps.TravelMode[this.modeString] //TRANSIT
+    }, (res, status) => {
+        if(status == google.maps.DirectionsStatus.OK){
+            console.log(res.routes[0].legs[0]);
+            this.routeString = res.routes[0].legs[0].distance.text+", "+res.routes[0].legs[0].duration.text;
+            directionsDisplay.setDirections(res);
+        } else {
+            console.warn(status);
+        }
+    });
+
+  }
+
+  onclickMode(){
+    console.log("mode");
+    document.querySelector("#map").style.visibility = "hidden";
+    setTimeout(()=>{
+      this.loadMap();
+      document.querySelector("#map").style.visibility = "visible";
+    }, 4000);
   }
 
   initializeRoute() {
@@ -129,17 +158,6 @@ export class AboutPage {
     .then(function(coordinates: NativeGeocoderForwardResult) {
       console.log('The coordinates are latitude=' + coordinates.latitude + ' and longitude=' + coordinates.longitude)
     }).catch((error: any) => console.log(error+",error"));
-    // map.addMarker({
-    //   'position': position,
-    //   'title':  JSON.stringify(result.position)
-    // }, function(marker) {
-    //
-    // map.animateCamera({
-    //   'target': position,
-    //   'zoom': 17
-    // }, function() {
-    //
-    // });
   }
 
 }
