@@ -21,7 +21,7 @@
       </ion-item>
     </div>
 
-    <div id="weather" class="item-block" style="visibility: hidden">
+    <div id="weather" class="item-block" style="visibility: hidden; display:inline">
       <ion-card>
         <ion-card-header>
           Wetter: {{searchString}}
@@ -50,6 +50,17 @@
         </ion-card-content>
       </ion-card>
 
+      <ion-card>
+        <ion-card-header>
+          Route: {{searchString}}
+        </ion-card-header>
+          <div #map id="map"></div>
+        <ion-card-content>
+          <div id="noGPS" style="margin: 5%; display: none">
+            Um die Map anzuzeigen, aktivere das GSP in den Einstellungen
+          </div>
+        </ion-card-content>
+      </ion-card>
 
     </div>
 
