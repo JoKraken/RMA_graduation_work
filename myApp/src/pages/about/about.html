@@ -19,9 +19,10 @@
           <ion-option *ngFor="let country of countryArray" value="/{{country.country_name}}">{{country.country_name}} ({{country.state}})</ion-option>
         </ion-select>
       </ion-item>
+      <p id="errorCountry" style="padding-left: 16px; display: none">Es ist ein Fehler aufgetrehten, bitte versuchen Sie es später nocheinmal!</p>
     </div>
 
-    <div id="weather" class="item-block" style="visibility: hidden; display:inline">
+    <div id="weather" class="item-block" style="display:none">
       <ion-card>
         <ion-card-header>
           Wetter: {{searchString}}

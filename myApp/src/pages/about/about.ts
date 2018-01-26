@@ -44,6 +44,7 @@ export class AboutPage {
   ionViewWillEnter(){}
 
   search(ev: any){
+    document.querySelector("#errorCountry").style.display = "none";
     this.countSearch++;
     setTimeout(()=>{
       this.searchHelp(this.countSearch, ev);
@@ -51,13 +52,13 @@ export class AboutPage {
   }
 
   searchHelp(param, ev: any){
-    if(param == this.countSearch
-      && document.querySelector(".country") != undefined
-      && (document.querySelector(".country") as HTMLCollectionOf<HTMLElement>).style != undefined){
+    if(param == this.countSearch && document.querySelector(".country") != undefined
+      && (document.querySelector(".country") as HTMLCollectionOf<HTMLElement>).style != undefined
+    ){
 
       this.countSearch = 0;
       document.querySelector(".country").style.display = "none";
-      document.querySelector("#weather").style.visibility = "hidden";
+      document.querySelector("#weather").style.display = "none";
       if(ev != undefined)this.searchString = ev.target.value;
       this.request = this.httpClient.get('http://api.wunderground.com/api/137581351957bfb1/forecast10day/q'+this.country+'/'+this.searchString+'.json');
 
@@ -73,7 +74,7 @@ export class AboutPage {
               array.push(element);
           });
           this.weatherArray = array;
-          document.querySelector("#weather").style.visibility = "visible";
+          document.querySelector("#weather").style.display = "block";
           this.loadMap();
           setTimeout(function () {
             document.querySelector(".weather").classList.remove("weatherNotFirst");
@@ -90,10 +91,24 @@ export class AboutPage {
     }
   }
 
-  onclickCountry(){
-    console.log("country");
+  onclickCountry(countryString, count){
+    if(countryString == undefined){
+      document.querySelector("#errorCountry").style.display = "none";
+      var count = 0;
+      countryString = this.country;
+    }
     setTimeout(()=>{
-      this.search();
+      if(countryString.localeCompare(this.country) == 0){
+        count++;
+        if(count < 5) this.onclickCountry(countryString, count);
+        else{
+          document.querySelector("#errorCountry").style.display = "block";
+          setTimeout(()=>{
+            document.querySelector("#errorCountry").style.display = "none";
+          }, 4000);
+        }
+      }else
+        this.search();
     }, 4000);
   }
 
@@ -144,13 +159,18 @@ export class AboutPage {
 
   }
 
-  onclickMode(){
-    console.log("mode");
-    document.querySelector("#map").style.visibility = "hidden";
+  onclickMode(mode, count){
+    if(mode == undefined){
+      var count = 0;
+      mode = this.modeString;
+    }
     setTimeout(()=>{
-      this.loadMap();
-      document.querySelector("#map").style.visibility = "visible";
-    }, 4000);
+      if(mode.localeCompare(this.modeString) == 0){
+        count++;
+        if(count < 5) this.onclickMode(mode, count);
+      }else
+        this.loadMap();
+    }, 3000);
   }
 
   initializeRoute() {
