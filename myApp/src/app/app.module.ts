@@ -4,6 +4,7 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 
 import { AboutPage } from '../pages/about/about';
+// import { MapDetailsPage } from '../pages/about/about';
 import { ContactPage } from '../pages/contact/contact';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
@@ -13,12 +14,13 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HttpClientModule } from '@angular/common/http';
 import { Geolocation } from '@ionic-native/geolocation';
-import { NativeGeocoder, NativeGeocoderReverseResult, NativeGeocoderForwardResult } from '@ionic-native/native-geocoder';
+import { NativeGeocoder } from '@ionic-native/native-geocoder';
 
 @NgModule({
   declarations: [
     MyApp,
     AboutPage,
+    // MapDetailsPage,
     ContactPage,
     HomePage,
     TabsPage
@@ -26,7 +28,12 @@ import { NativeGeocoder, NativeGeocoderReverseResult, NativeGeocoderForwardResul
   imports: [
     BrowserModule,
     HttpClientModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp,
+    {
+       links: [
+         // { component: MapDetailsPage, name: 'MapDetailsPage', segment: 'maps-details' }
+       ]
+    })
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -34,6 +41,7 @@ import { NativeGeocoder, NativeGeocoderReverseResult, NativeGeocoderForwardResul
     AboutPage,
     ContactPage,
     HomePage,
+    // MapDetailsPage,
     TabsPage
   ],
   providers: [

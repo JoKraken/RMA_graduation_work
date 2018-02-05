@@ -1,5 +1,5 @@
-import { Component, ViewChild,ElementRef } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { Component, ViewChild, ElementRef } from '@angular/core';
+import { NavController, NavParams } from 'ionic-angular';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 
@@ -7,6 +7,21 @@ import { Observable } from 'rxjs/Observable';
 import { HttpClient } from '@angular/common/http';
 import { Geolocation } from '@ionic-native/geolocation';
 import { NativeGeocoder, NativeGeocoderForwardResult } from '@ionic-native/native-geocoder';
+
+// @Component({
+//   selector: 'maps-details',
+//   templateUrl: 'maps-details.html',
+// })
+//
+// export class MapDetailsPage {
+//   item;
+//   items = [];
+//
+//   constructor(params: NavParams) {
+//     this.item = params;
+//   }
+// }
+
 
 declare var google: any;
 
@@ -26,6 +41,8 @@ export class AboutPage {
   locations = [{lat: 52.272984, lng: 8.0460331}];
   directionsService = new google.maps.DirectionsService;
   directionsDisplay;
+  routeDetails;
+  geoURL = "";
 
   countSearch = 0;
   country = "";
@@ -35,6 +52,7 @@ export class AboutPage {
   request: Observable<any>;
 
   constructor(
+    // public MapDetailsPage: MapDetailsPage,
     private nativeGeocoder: NativeGeocoder,
     public navCtrl: NavController,
     public httpClient: HttpClient,
@@ -55,17 +73,24 @@ export class AboutPage {
     if(param == this.countSearch && document.querySelector(".country") != undefined
       && (document.querySelector(".country") as HTMLCollectionOf<HTMLElement>).style != undefined
     ){
-
       this.countSearch = 0;
       document.querySelector(".country").style.display = "none";
       document.querySelector("#weather").style.display = "none";
       if(ev != undefined)this.searchString = ev.target.value;
-      this.request = this.httpClient.get('http://api.wunderground.com/api/137581351957bfb1/forecast10day/q'+this.country+'/'+this.searchString+'.json');
 
+      let url = "";
+      if(this.country.localeCompare("") == 0) url = 'http://api.wunderground.com/api/137581351957bfb1/forecast10day/q/'+this.searchString+'.json';
+      else url = 'http://api.wunderground.com/api/137581351957bfb1/forecast10day'+this.country+'.json';
+
+      this.request = this.httpClient.get(url);
       this.request
       .subscribe(data => {
         console.log(data);
         if(data.forecast != undefined){
+          if(this.country.localeCompare("") == 0) this.geoURL = 'http://api.wunderground.com/api/137581351957bfb1/geolookup/q/'+this.searchString+'.json';
+          else this.geoURL = 'http://api.wunderground.com/api/137581351957bfb1/geolookup'+this.country+'.json';
+          console.log(this.geoURL);
+
           this.country = "";
           this.countryArray = [];
           let array = [];
@@ -84,8 +109,8 @@ export class AboutPage {
             document.querySelector(".templow").style.display = "none";
           }, 10);
         }else if(data.response.results != undefined && data.response.results[0].name != undefined){
-            document.querySelector(".country").style.display = "block";
-            this.countryArray = data.response.results;
+          document.querySelector(".country").style.display = "block";
+          this.countryArray = data.response.results;
         }
        })
     }
@@ -130,7 +155,6 @@ export class AboutPage {
         position: latLng
       });
 
-      // this.initializeRoute();
       this.startNavigating(position);
     }, (err) => {
       console.log(err);
@@ -142,20 +166,25 @@ export class AboutPage {
     let directionsDisplay = new google.maps.DirectionsRenderer;
     directionsDisplay.setMap(this.map);
 
-    console.log(this.modeString);
-    directionsService.route({
-        origin: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
-        destination: new google.maps.LatLng(position.coords.latitude-2, position.coords.longitude-2),
-        travelMode: google.maps.TravelMode[this.modeString] //TRANSIT
-    }, (res, status) => {
-        if(status == google.maps.DirectionsStatus.OK){
-            console.log(res.routes[0].legs[0]);
-            this.routeString = res.routes[0].legs[0].distance.text+", "+res.routes[0].legs[0].duration.text;
-            directionsDisplay.setDirections(res);
-        } else {
-            console.warn(status);
-        }
-    });
+    this.request = this.httpClient.get(this.geoURL);
+    this.request
+    .subscribe(data => {
+      console.log(data.location);
+      directionsService.route({
+          origin: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+          destination: new google.maps.LatLng(data.location.lat, data.location.lon),
+          travelMode: google.maps.TravelMode[this.modeString] //TRANSIT
+      }, (res, status) => {
+          if(status == google.maps.DirectionsStatus.OK){
+              console.log(res.routes[0].legs[0]);
+              this.routeString = res.routes[0].legs[0].distance.text+", "+res.routes[0].legs[0].duration.text;
+              this.routeDetails = res.routes[0].legs[0];
+              directionsDisplay.setDirections(res);
+          } else {
+              console.warn(status);
+          }
+      });
+     })
 
   }
 
@@ -173,11 +202,8 @@ export class AboutPage {
     }, 3000);
   }
 
-  initializeRoute() {
-    this.nativeGeocoder.forwardGeocode(this.searchString+", "+this.country)
-    .then(function(coordinates: NativeGeocoderForwardResult) {
-      console.log('The coordinates are latitude=' + coordinates.latitude + ' and longitude=' + coordinates.longitude)
-    }).catch((error: any) => console.log(error+",error"));
+  openMapDetailsPage(item) {
+    // this.navCtrl.push(MapDetailsPage, { item: item });
   }
 
 }

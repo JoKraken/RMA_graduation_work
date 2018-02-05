@@ -16,7 +16,7 @@
       <ion-item>
         <ion-label>Land</ion-label>
         <ion-select [(ngModel)]="country" (click)="onclickCountry()">
-          <ion-option *ngFor="let country of countryArray" value="/{{country.country_name}}">{{country.country_name}} ({{country.state}})</ion-option>
+          <ion-option *ngFor="let country of countryArray" value="/{{country.l}}">{{country.country_name}} ({{country.state}})</ion-option>
         </ion-select>
       </ion-item>
       <p id="errorCountry" style="padding-left: 16px; display: none">Es ist ein Fehler aufgetrehten, bitte versuchen Sie es später nocheinmal!</p>
@@ -67,6 +67,9 @@
         <ion-card-content>
           <div id="routeSettings">
             {{routeString}}
+            <button ion-item (click)="openMapDetailsPage(routeDetails)" icon-start>
+              Details der Route
+            </button>
           </div>
           <div id="noGPS" style="margin: 5%; display: none">
             Um die Map anzuzeigen, aktivere das GSP in den Einstellungen
