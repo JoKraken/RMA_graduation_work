@@ -23,13 +23,25 @@
     </div>
 
     <div id="weather" class="item-block" style="display:none">
+
+      <ion-card>
+        <ion-card-header>
+          Informationen zu {{searchString}}
+        </ion-card-header>
+        <ion-card-content>
+          <p>Klicke hier um Informationen zu dieser Stadt bei Wikipedia zu erhalten: <br>
+            <a href="https://de.wikipedia.org/w/index.php?title=Spezial:Suche&search={{searchString}}" target="_blank">{{searchString}}</a>
+          </p>
+        </ion-card-content>
+      </ion-card>
+
       <ion-card>
         <ion-card-header>
           Wetter: {{searchString}}
         </ion-card-header>
         <ion-card-content>
           <div *ngFor="let weather of weatherArray" class="weather weatherNotFirst">
-            <p style="width: 60px; font-size: 30px;margin: 0px 5%;">
+            <p style="width: 60px; font-size: 26px;margin: 0px 5%;">
               {{weather.date.weekday_short}}
             </p>
             <img src="{{weather.icon_url}}" style="max-width: 77px;">

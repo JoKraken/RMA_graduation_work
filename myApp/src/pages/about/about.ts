@@ -119,22 +119,23 @@ export class AboutPage {
   onclickCountry(countryString, count){
     if(countryString == undefined){
       document.querySelector("#errorCountry").style.display = "none";
-      var count = 0;
+      count = 0;
       countryString = this.country;
     }
     setTimeout(()=>{
       if(countryString.localeCompare(this.country) == 0){
         count++;
-        if(count < 5) this.onclickCountry(countryString, count);
+        if(count < 15) this.onclickCountry(countryString, count);
         else{
           document.querySelector("#errorCountry").style.display = "block";
           setTimeout(()=>{
             document.querySelector("#errorCountry").style.display = "none";
           }, 4000);
         }
-      }else
+      }else{
         this.search();
-    }, 4000);
+      }
+    }, 2000);
   }
 
   loadMap(){
@@ -190,16 +191,16 @@ export class AboutPage {
 
   onclickMode(mode, count){
     if(mode == undefined){
-      var count = 0;
+      count = 0;
       mode = this.modeString;
     }
     setTimeout(()=>{
       if(mode.localeCompare(this.modeString) == 0){
         count++;
-        if(count < 5) this.onclickMode(mode, count);
+        if(count < 15) this.onclickMode(mode, count);
       }else
         this.loadMap();
-    }, 3000);
+    }, 2000);
   }
 
   openMapDetailsPage(item) {
