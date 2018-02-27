@@ -21,7 +21,6 @@ export class ContactPage {
   ionViewWillEnter(){
     this.storage.get('settings').then((val) => {
       let settings = JSON.parse(val);
-      console.log(settings);
       this.gps = settings.gps;
       this.viewHistory = settings.viewHistory;
     });

@@ -15,18 +15,32 @@
         <br>
         <br>
         Es wird dir das Wetter der nächsten Tage, die kürzeste Route mit dem Auto und die
-        zur Verfügungstehenden Airbnb`s Unterkünfte angezeigt.
+        Hotels, Hostels und Restaurants in der gesuchten Stadt angezeigt.
       </p>
     </ion-card-content>
   </ion-card>
 
-  <div class="card-background-page">
+  <ion-card>
+    <ion-card-header>
+        Favoriten
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item *ngFor="let favorites of favorites">
+        <p>{{favorites[2]}} <ion-icon name="star" style="float: right;color: #488aff;"></ion-icon></p>
+      </ion-item>
+      <p id="noFavorites">Sie haben noch keine Favoriten hinzugefügt.</p>
+    </ion-card-content>
+  </ion-card>
 
-    <ion-card>
-      <img src="/assets/imgs/card-saopaolo.png"/>
-      <div class="card-title">São Paulo</div>
-      <div class="card-subtitle">41 Listings</div>
-    </ion-card>
-
-  </div>
+  <ion-card id="mostWanted">
+    <ion-card-header>
+        Meistgesuchte Stadte
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item *ngFor="let viewHistory of viewHistory" [style.display]="viewHistory[4]">
+        <p>{{viewHistory[3]}}: {{viewHistory[2]}}</p>
+      </ion-item>
+      <p id="noHistory">Sie haben noch nach keiner Stadt gesucht.</p>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

@@ -71,7 +71,7 @@
           Route: {{searchString}}
         </ion-card-header>
         <ion-card-content>
-          Um die Map anzuzeigen, aktivere das GSP in den Einstellungen
+          Um die Map anzuzeigen, aktivere das GPS in den Einstellungen
         </ion-card-content>
       </ion-card>
 
@@ -100,6 +100,13 @@
           </div>
         </ion-card-content>
       </ion-card>
+
+      <button id="saveAsFavorites" ion-button (click)="saveAsFavorites()" icon-start>
+        als Favoriten speichern
+      </button>
+      <button id="deleteFavorites" ion-button (click)="deleteFavorites()" icon-start>
+        aus Favoritenliste entfernen
+      </button>
 
     </div>
 

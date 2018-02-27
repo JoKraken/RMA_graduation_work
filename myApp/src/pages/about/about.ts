@@ -38,7 +38,6 @@ export class CityDetailsPage {
   ) {
     this.item = params.data.item;
     console.log(this.item);
-
     this.loadMap();
   }
 
@@ -293,6 +292,8 @@ export class AboutPage {
     this.request = this.httpClient.get(this.geoURL);
     this.request
     .subscribe(data => {
+      console.log(data);
+      if(data.location != undefined) this.searchString = data.location.city;
       this.locations = [data.location.lat, data.location.lon];
       directionsService.route({
           origin: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
@@ -311,12 +312,99 @@ export class AboutPage {
               document.querySelector("#routeSettings").style.display = "none";
               document.querySelector("#noResults").style.display = "block";
           }
+          this.cityIsInFavorites();
+          this.addViewHistory(this.locations);
       });
     },
     error => {
             console.log(error);
         })
 
+  }
+
+  addViewHistory(locations){
+    if(this.settings.viewHistory){
+      this.storage.get('viewHistory').then((val) => {
+        let viewHistory = JSON.parse(val);
+        if(viewHistory == null){
+          viewHistory = [[locations[0], locations[1], this.searchString, 1, "none"]];
+        }else{
+          let isIn = 0;
+          for(let i = 0; i < viewHistory.length; i++){
+            if(viewHistory[i][0] == locations[0] && viewHistory[i][1] == locations[1]){
+              viewHistory[i][3]++;
+              isIn = 1;
+            }
+          }
+          if(isIn == 0) viewHistory.push([locations[0], locations[1], this.searchString, 1, "none"]);
+
+          //viewHistory sortieren
+          for(let i = 0; i < viewHistory.length; i++){
+            for(let a = 0; a < viewHistory.length-1; a++){
+              if(a > 5) viewHistory[a][4] = "none";
+              else viewHistory[a][4] = "block";
+
+              if(viewHistory[a][3] < viewHistory[a+1][3]){
+                let temp = viewHistory[a];
+                viewHistory[a] = viewHistory[a+1];
+                viewHistory[a+1] = temp;
+              }
+            }
+          }
+        }
+
+        this.storage.set('viewHistory', JSON.stringify(viewHistory));
+      });
+    }
+  }
+
+  cityIsInFavorites(){
+    this.storage.get('favorites').then((val) => {
+      let favorites = JSON.parse(val);
+
+      let isIn = 0;
+      for(let a = 0; a < favorites.length; a++){
+        if(favorites[a][0] == this.locations[0] && favorites[a][1] == this.locations[1]){
+          isIn = 1;
+        }
+      }
+
+      if(isIn == 0){
+         document.querySelector("#saveAsFavorites").style.display = "block";
+         document.querySelector("#deleteFavorites").style.display = "none";
+      }else{
+         document.querySelector("#deleteFavorites").style.display = "block";
+         document.querySelector("#saveAsFavorites").style.display = "none";
+      }
+    });
+  }
+
+  saveAsFavorites(){
+    this.storage.get('favorites').then((val) => {
+      let favorites = JSON.parse(val);
+      if(favorites == null) favorites = [];
+      favorites.push([this.locations[0], this.locations[1], this.searchString]);
+      this.storage.set('favorites', JSON.stringify(favorites));
+         document.querySelector("#deleteFavorites").style.display = "block";
+         document.querySelector("#saveAsFavorites").style.display = "none";
+    });
+  }
+
+  deleteFavorites(){
+    this.storage.get('favorites').then((val) => {
+      let favorites = JSON.parse(val);
+      let temp = [];
+
+      for(let a = 0; a < favorites.length; a++){
+        if(favorites[a][0] != this.locations[0] && favorites[a][1] != this.locations[1]){
+          temp.push(favorites[a]);
+        }
+      }
+
+      this.storage.set('favorites', JSON.stringify(temp));
+         document.querySelector("#saveAsFavorites").style.display = "block";
+         document.querySelector("#deleteFavorites").style.display = "none";
+    });
   }
 
   onclickMode(mode, count){
