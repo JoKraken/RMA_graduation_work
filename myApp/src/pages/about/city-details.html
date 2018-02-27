@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Citydetails
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+  <ion-card>
+    <ion-item>
+      <ion-label>Nach was suchst du?</ion-label>
+      <ion-select id="what" [(ngModel)]="whatString" (click)="onclickWhat()">
+        <ion-option *ngFor="let what of what" value="{{what.value}}">{{what.name}}</ion-option>
+      </ion-select>
+    </ion-item>
+      <ion-item>
+        <ion-label>Anzahl</ion-label>
+        <ion-select id="howMuch" [(ngModel)]="howMuchString" (click)="onclickHowMuch()">
+          <ion-option *ngFor="let howMuch of howMuch" value="{{howMuch.value}}">{{howMuch.name}}</ion-option>
+        </ion-select>
+      </ion-item>
+      <div #map id="map"></div>
+      <ion-list>
+        <ion-list-header>{{whatString}}</ion-list-header>
+        <ion-item *ngFor="let itemsMap of itemsMap">
+          {{itemsMap.name}}
+          <div>
+            <p>Telephonnummmer: {{itemsMap.contact.formattedPhone}}</p>
+            <p>Adresse: {{itemsMap.location.formattedAddress[0]}}, {{itemsMap.location.formattedAddress[1]}}</p>
+            <p>Website: <a href="{{itemsMap.url}}" target="_blank">{{itemsMap.url}}</a></p>
+
+          </div>
+        </ion-item>
+      </ion-list>
+  </ion-card>
+
+</ion-content>

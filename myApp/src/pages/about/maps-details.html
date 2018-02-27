@@ -1,13 +1,17 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Route
+      Routendetails
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
 
-
+  <ion-item-group  id="instructions">
+    <ion-item-divider color="light">
+        {{item.data.item.distance.text}}, {{item.data.item.duration.text}}
+    </ion-item-divider>
+  </ion-item-group>
 
 </ion-content>
