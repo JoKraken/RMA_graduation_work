@@ -1,10 +1,10 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { IonicStorageModule } from '@ionic/storage';
 import { MyApp } from './app.component';
 
-import { AboutPage } from '../pages/about/about';
-// import { MapDetailsPage } from '../pages/about/about';
+import { AboutPage as AboutPage, MapDetailsPage, CityDetailsPage } from '../pages/about/about';
 import { ContactPage } from '../pages/contact/contact';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
@@ -13,6 +13,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HttpClientModule } from '@angular/common/http';
+import { HttpModule } from '@angular/http';
 import { Geolocation } from '@ionic-native/geolocation';
 import { NativeGeocoder } from '@ionic-native/native-geocoder';
 
@@ -20,28 +21,34 @@ import { NativeGeocoder } from '@ionic-native/native-geocoder';
   declarations: [
     MyApp,
     AboutPage,
-    // MapDetailsPage,
+    MapDetailsPage,
+    CityDetailsPage,
     ContactPage,
     HomePage,
     TabsPage
   ],
   imports: [
     BrowserModule,
+    HttpModule,
     HttpClientModule,
     IonicModule.forRoot(MyApp,
     {
        links: [
-         // { component: MapDetailsPage, name: 'MapDetailsPage', segment: 'maps-details' }
+          { component: CityDetailsPage, name: 'CityDetailsPage', segment: 'city-details' },
+          { component: MapDetailsPage, name: 'MapDetailsPage', segment: 'maps-details' },
+          { component: AboutPage, name: 'AboutPage', segment: 'page-about' }
        ]
-    })
+    }),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
     AboutPage,
+    MapDetailsPage,
+    CityDetailsPage,
     ContactPage,
     HomePage,
-    // MapDetailsPage,
     TabsPage
   ],
   providers: [

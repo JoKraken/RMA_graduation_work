@@ -32,6 +32,9 @@
           <p>Klicke hier um Informationen zu dieser Stadt bei Wikipedia zu erhalten: <br>
             <a href="https://de.wikipedia.org/w/index.php?title=Spezial:Suche&search={{searchString}}" target="_blank">{{searchString}}</a>
           </p>
+          <button ion-item (click)="openCityDetailsPage(locations)" icon-start>
+            Details zu Hotels und Hostels
+          </button>
         </ion-card-content>
       </ion-card>
 
@@ -63,12 +66,21 @@
         </ion-card-content>
       </ion-card>
 
-      <ion-card>
+      <ion-card id="noGPS">
+        <ion-card-header>
+          Route: {{searchString}}
+        </ion-card-header>
+        <ion-card-content>
+          Um die Map anzuzeigen, aktivere das GSP in den Einstellungen
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card id="GPS">
         <ion-card-header>
           Route: {{searchString}}
           <div class="mode" style="width: 68%;display: inline-block;">
             <ion-item>
-              <ion-label>Fortbewegung...</ion-label>
+              <ion-label></ion-label>
               <ion-select id="mode" [(ngModel)]="modeString" (click)="onclickMode()">
                 <ion-option *ngFor="let mode of mode" value="{{mode.value}}">{{mode.name}}</ion-option>
               </ion-select>
@@ -78,13 +90,13 @@
           <div #map id="map"></div>
         <ion-card-content>
           <div id="routeSettings">
-            {{routeString}}
+            Distanz:  {{routeString}}
             <button ion-item (click)="openMapDetailsPage(routeDetails)" icon-start>
               Details der Route
             </button>
           </div>
-          <div id="noGPS" style="margin: 5%; display: none">
-            Um die Map anzuzeigen, aktivere das GSP in den Einstellungen
+          <div id="noResults">
+            Es wurde keine Route gefunden. Bitte probieren Sie es mit einem anderen Fortbewegungsmittel.
           </div>
         </ion-card-content>
       </ion-card>
