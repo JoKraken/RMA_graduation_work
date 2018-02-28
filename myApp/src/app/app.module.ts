@@ -4,7 +4,10 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { MyApp } from './app.component';
 
-import { AboutPage as AboutPage, MapDetailsPage, CityDetailsPage } from '../pages/about/about';
+
+import { AboutPage } from '../pages/about/about';
+import { MapDetailsPage } from '../pages/about/maps-details';
+import { CityDetailsPage } from '../pages/about/city-details';
 import { ContactPage } from '../pages/contact/contact';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
@@ -34,9 +37,9 @@ import { NativeGeocoder } from '@ionic-native/native-geocoder';
     IonicModule.forRoot(MyApp,
     {
        links: [
-          { component: CityDetailsPage, name: 'CityDetailsPage', segment: 'city-details' },
-          { component: MapDetailsPage, name: 'MapDetailsPage', segment: 'maps-details' },
-          { component: AboutPage, name: 'AboutPage', segment: 'page-about' }
+          // { component: CityDetailsPage, name: 'CityDetailsPage', segment: 'city-details' },
+          // { component: MapDetailsPage, name: 'MapDetailsPage', segment: 'maps-details' },
+          // { component: AboutPage, name: 'AboutPage', segment: 'page-about' }
        ]
     }),
     IonicStorageModule.forRoot()

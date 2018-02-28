@@ -1,7 +1,8 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Add Städtetrip
+      <div id="title">Add Städtetrip</div>
+      <div id="title_String" style="display: none">{{searchString}}</div>
     </ion-title>
   </ion-navbar>
 </ion-header>
@@ -9,7 +10,7 @@
 <ion-content padding>
 
 
-    <ion-searchbar (ionInput)="search($event)">Stadt...</ion-searchbar>
+    <ion-searchbar id="search" (ionInput)="search($event)">Stadt...</ion-searchbar>
 
     <div class="country">
       <p style="padding-left: 16px;">Bitte wähle ein Land aus</p>
@@ -23,7 +24,6 @@
     </div>
 
     <div id="weather" class="item-block" style="display:none">
-
       <ion-card>
         <ion-card-header>
           Informationen zu {{searchString}}
@@ -33,7 +33,7 @@
             <a href="https://de.wikipedia.org/w/index.php?title=Spezial:Suche&search={{searchString}}" target="_blank">{{searchString}}</a>
           </p>
           <button ion-item (click)="openCityDetailsPage(locations)" icon-start>
-            Details zu Hotels und Hostels
+            Vorschläge für Hotels und Hostels
           </button>
         </ion-card-content>
       </ion-card>
@@ -55,7 +55,7 @@
               {{weather.low.celsius}} °C
             </p>
             <div  class="additive" style="font-size: 15px;margin: 0px 5%;color: #bababa !important; display: none">
-              <p class="temp" style="    display: inline-block;">{{weather.high.celsius}} °C <br> {{weather.low.celsius}} °C </p>
+              <p class="temp" style="display: inline-block;">{{weather.high.celsius}} °C <br> {{weather.low.celsius}} °C </p>
               <p style="float: right;display: inline-block;">
                 Niederschlag: {{weather.pop}} % <br>
                 Luftfeuchtigkeit: {{weather.avehumidity}} % <br>
@@ -77,8 +77,8 @@
 
       <ion-card id="GPS">
         <ion-card-header>
-          Route: {{searchString}}
-          <div class="mode" style="width: 68%;display: inline-block;">
+          <div style="float: left;height: 45px;padding: inherit;">Route: {{searchString}}</div>
+          <div class="mode" style="float: right;display: inline-block;">
             <ion-item>
               <ion-label></ion-label>
               <ion-select id="mode" [(ngModel)]="modeString" (click)="onclickMode()">
@@ -101,10 +101,10 @@
         </ion-card-content>
       </ion-card>
 
-      <button id="saveAsFavorites" ion-button (click)="saveAsFavorites()" icon-start>
+      <button id="saveAsFavorites" style="margin: 10px;" ion-button (click)="saveAsFavorites()" icon-start>
         als Favoriten speichern
       </button>
-      <button id="deleteFavorites" ion-button (click)="deleteFavorites()" icon-start>
+      <button id="deleteFavorites" style="margin: 10px;" ion-button (click)="deleteFavorites()" icon-start>
         aus Favoritenliste entfernen
       </button>
 

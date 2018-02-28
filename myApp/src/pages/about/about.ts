@@ -1,135 +1,13 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
-//import { HttpClientModule } from '@angular/common/http';
-//import { HttpModule } from '@angular/http';
 import { Storage } from '@ionic/storage';
 
 import { Observable } from 'rxjs/Observable';
 import { HttpClient } from '@angular/common/http';
 import { Geolocation } from '@ionic-native/geolocation';
-//import { NativeGeocoder, NativeGeocoderForwardResult } from '@ionic-native/native-geocoder';
 
-
-@Component({
-  selector: 'city-details',
-  templateUrl: 'city-details.html',
-})
-
-export class CityDetailsPage {
-  item;
-  itemsMap;
-  what = [{name: "Hotel", value: "Hotel"},
-          {name: "Hostel", value: "Hostel"},
-          {name: "Restaurant", value: "Restaurant"}];
-  whatString = "Hotel";
-  howMuch = [{name: "15", value: "15"},
-          {name: "25", value: "25"},
-          {name: "50", value: "50"}];
-  howMuchString = "15";
-
-  items = [];
-  @ViewChild('map') mapElement: ElementRef;
-  map: any;
-  request: Observable<any>;
-
-  constructor(
-    public httpClient: HttpClient,
-    params: NavParams
-  ) {
-    this.item = params.data.item;
-    console.log(this.item);
-    this.loadMap();
-  }
-
-  loadMap(){
-    let params = 'v=20161017&ll='+this.item[0]+'%2C'+this.item[1]+'&query='+this.whatString+'&limit='+this.howMuchString
-    +'&intent=checkin&client_id=BCUJZ2MSKUWJC2Q5HVIYZLHRWGFJ2OFPKPLBP1NOBNR3VW5R'
-    +'&client_secret=Q10HUP5APBQOYNTPABSH4CSKRGEAI2CXIYULYGG0EZYUUWUZ';
-
-    this.request = this.httpClient.get('https://api.foursquare.com/v2/venues/search?'+params);
-    this.request.subscribe(data => {
-      console.log(data.response.venues);
-
-      let latLng = new google.maps.LatLng(this.item[0], this.item[1]);
-
-      let mapOptions = {
-        center: latLng,
-        zoom: 12,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      }
-
-      this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-
-      this.itemsMap = data.response.venues;
-      for(let i = 0; i < this.itemsMap.length; i++){
-        let latLng = new google.maps.LatLng(this.itemsMap[i].location.lat, this.itemsMap[i].location.lng);
-
-        var marker = new google.maps.Marker({
-          map: this.map,
-          title: "test",
-          animation: google.maps.Animation.DROP,
-          position: latLng
-        });
-      }
-     })
-  }
-
-  onclickWhat(mode, count){
-    if(mode == undefined){
-      count = 0;
-      mode = this.whatString;
-    }
-    setTimeout(()=>{
-      if(mode.localeCompare(this.whatString) == 0){
-        count++;
-        if(count < 15) this.onclickWhat(mode, count);
-      }else
-        this.loadMap();
-    }, 2000);
-  }
-
-  onclickHowMuch(mode, count){
-    if(mode == undefined){
-      count = 0;
-      mode = this.howMuchString;
-    }
-    setTimeout(()=>{
-      if(mode.localeCompare(this.howMuchString) == 0){
-        count++;
-        if(count < 15) this.onclickHowMuch(mode, count);
-      }else
-        this.loadMap();
-    }, 2000);
-  }
-}
-
-
-@Component({
-  selector: 'maps-details',
-  templateUrl: 'maps-details.html',
-})
-
-export class MapDetailsPage {
-  item;
-  steps;
-  items = [];
-
-  constructor(params: NavParams) {
-    this.item = params;
-    this.steps = params.data.item.steps;
-    console.log(this.item);
-
-    setTimeout(()=>{
-        let string = document.querySelector("#instructions").innerHTML;
-        for(let i = 0; i < this.steps.length; i++){
-          string += "<button  style='background-color: #fff;width: 100%;padding: 16px;border-bottom: 1px solid #dedede'> "
-            + this.steps[i].instructions + " (" +this.steps[i].distance.text +  ")</button > <br>";
-        }
-      document.querySelector("#instructions").innerHTML = string;
-    }, this.steps, 100);
-
-  }
-}
+import { CityDetailsPage } from '../about/city-details';
+import { MapDetailsPage } from '../about/maps-details';
 
 
 declare var google: any;
@@ -151,6 +29,7 @@ export class AboutPage {
   map: any;
   geocoder;
   locations = [];
+  uniqueCityString = "";
   directionsService = new google.maps.DirectionsService;
   directionsDisplay;
   routeDetails;
@@ -164,24 +43,37 @@ export class AboutPage {
   request: Observable<any>;
 
   constructor(
-    //private nativeGeocoder: NativeGeocoder,
+    params: NavParams,
     public nav: NavController,
     public httpClient: HttpClient,
     private geolocation: Geolocation,
     private storage: Storage
-  ) {}
+  ) {
+    //console.log(params.data.item);
+    this.getSettings();
+    if(params.data.item != undefined){
+      this.searchString = params.data.item[2];
+      this.country = params.data.item[3];
+      this.location = [params.data.item[0], params.data.item[1]];
+      setTimeout(()=>{
+        document.querySelector("#title").style.display = "none";
+        document.querySelector("#search").style.display = "none";
+        document.querySelector("#title_String").style.display = "block";
+        this.searchHelp(this.countSearch);
+      }, params, 10);
+    }
+  }
 
-  ionViewWillEnter(){
+  getSettings(){
     this.storage.get('settings').then((val) => {
       this.settings = JSON.parse(val);
-      if(this.settings.gps){
+      if(this.settings!= null && this.settings.gps){
         document.querySelector("#noGPS").style.display = "none";
         document.querySelector("#GPS").style.display = "block";
       }else{
         document.querySelector("#GPS").style.display = "none";
         document.querySelector("#noGPS").style.display = "block";
       }
-      this.loadMap();
     });
   }
 
@@ -211,60 +103,47 @@ export class AboutPage {
       this.request
       .subscribe(data => {
         //console.log(data);
-        if(data.forecast != undefined){
-          if(this.country.localeCompare("") == 0) this.geoURL = 'http://api.wunderground.com/api/137581351957bfb1/geolookup/q/'+this.searchString+'.json';
-          else this.geoURL = 'http://api.wunderground.com/api/137581351957bfb1/geolookup'+this.country+'.json';
-          //console.log(this.geoURL);
-
-          this.country = "";
-          this.countryArray = [];
-          let array = [];
-          data.forecast.simpleforecast.forecastday.forEach(function(element) {
-              // console.log(element);
-              array.push(element);
-          });
-          this.weatherArray = array;
-          document.querySelector("#weather").style.display = "block";
-          this.loadMap();
-          setTimeout(function () {
-            document.querySelector(".weather").classList.remove("weatherNotFirst");
-            document.querySelector(".weather").classList.add("weatherFirst");
-            document.querySelector(".additive").style.display = "block";
-            document.querySelector(".temp").style.display = "none";
-            document.querySelector(".templow").style.display = "none";
-          }, 10);
-        }else if(data.response.results != undefined && data.response.results[0].name != undefined){
-          document.querySelector(".country").style.display = "block";
-          this.countryArray = data.response.results;
-        }
+        this.searchHelpInnerRequest(data);
        })
     }
   }
 
-  onclickCountry(countryString, count){
-    if(countryString == undefined){
-      document.querySelector("#errorCountry").style.display = "none";
-      count = 0;
-      countryString = this.country;
-    }
-    setTimeout(()=>{
-      if(countryString.localeCompare(this.country) == 0){
-        count++;
-        if(count < 15) this.onclickCountry(countryString, count);
-        else{
-          document.querySelector("#errorCountry").style.display = "block";
-          setTimeout(()=>{
-            document.querySelector("#errorCountry").style.display = "none";
-          }, 4000);
-        }
-      }else{
-        this.search();
+  searchHelpInnerRequest(data){
+    if(data.forecast != undefined){
+      if(this.country.localeCompare("") == 0){
+        this.geoURL = 'http://api.wunderground.com/api/137581351957bfb1/geolookup/q/'+this.searchString+'.json';
       }
-    }, 2000);
+      else {
+        this.geoURL = 'http://api.wunderground.com/api/137581351957bfb1/geolookup'+this.country+'.json';
+        this.uniqueCityString = this.country;
+      }
+
+      this.country = "";
+      this.countryArray = [];
+      let array = [];
+      data.forecast.simpleforecast.forecastday.forEach(function(element) {
+          // console.log(element);
+          array.push(element);
+      });
+      this.weatherArray = array;
+      document.querySelector("#weather").style.display = "block";
+      this.loadMap();
+      setTimeout(function () {
+        document.querySelector(".weather").classList.remove("weatherNotFirst");
+        document.querySelector(".weather").classList.add("weatherFirst");
+        document.querySelector(".additive").style.display = "block";
+        document.querySelector(".temp").style.display = "none";
+        document.querySelector(".templow").style.display = "none";
+      }, 50);
+    }else if(data.response.results != undefined && data.response.results[0].name != undefined){
+      this.countryArray = data.response.results;
+      if(this.countryArray.length != 0) document.querySelector(".country").style.display = "block";
+    }
   }
 
   loadMap(){
-    if(this.settings.gps){
+    this.cityIsInFavorites();
+    if(this.settings != null && this.settings.gps){
       this.geolocation.getCurrentPosition().then((position) => {
         let latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
@@ -292,29 +171,33 @@ export class AboutPage {
     this.request = this.httpClient.get(this.geoURL);
     this.request
     .subscribe(data => {
-      console.log(data);
-      if(data.location != undefined) this.searchString = data.location.city;
-      this.locations = [data.location.lat, data.location.lon];
-      directionsService.route({
-          origin: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
-          destination: new google.maps.LatLng(data.location.lat, data.location.lon),
-          travelMode: google.maps.TravelMode[this.modeString] //TRANSIT
-      }, (res, status) => {
-          if(status == google.maps.DirectionsStatus.OK){
-            document.querySelector("#noResults").style.display = "none";
-            document.querySelector("#routeSettings").style.display = "block";
-              //console.log(res.routes[0].legs[0]);
-              this.routeString = res.routes[0].legs[0].distance.text+" ("+res.routes[0].legs[0].duration.text+")";
-              this.routeDetails = res.routes[0].legs[0];
-              directionsDisplay.setDirections(res);
-          } else {
-              console.warn(status);
-              document.querySelector("#routeSettings").style.display = "none";
-              document.querySelector("#noResults").style.display = "block";
-          }
-          this.cityIsInFavorites();
-          this.addViewHistory(this.locations);
-      });
+      //console.log(data);
+      if(data.location != undefined && this.searchString.toLowerCase().localeCompare(data.location.city.toLowerCase()) == 0) this.searchString = data.location.city;
+      if(data.location != undefined){
+        this.locations = [data.location.lat, data.location.lon];
+        directionsService.route({
+            origin: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+            destination: new google.maps.LatLng(data.location.lat, data.location.lon),
+            travelMode: google.maps.TravelMode[this.modeString] //TRANSIT
+        }, (res, status) => {
+            if(status == google.maps.DirectionsStatus.OK){
+              document.querySelector("#noResults").style.display = "none";
+              document.querySelector("#routeSettings").style.display = "block";
+                //console.log(res.routes[0].legs[0]);
+                this.routeString = res.routes[0].legs[0].distance.text+" ("+res.routes[0].legs[0].duration.text+")";
+                this.routeDetails = res.routes[0].legs[0];
+                directionsDisplay.setDirections(res);
+            } else {
+                console.warn(status);
+                document.querySelector("#routeSettings").style.display = "none";
+                document.querySelector("#noResults").style.display = "block";
+            }
+            this.addViewHistory(this.locations);
+        });
+      }else{
+        document.querySelector("#routeSettings").style.display = "none";
+        document.querySelector("#noResults").style.display = "block";
+      }
     },
     error => {
             console.log(error);
@@ -322,29 +205,30 @@ export class AboutPage {
 
   }
 
+  //cityList = [lat, lng, cityname, uniqueCityString, count, firstFive, favorites]
   addViewHistory(locations){
     if(this.settings.viewHistory){
-      this.storage.get('viewHistory').then((val) => {
+      this.storage.get('cityList').then((val) => {
         let viewHistory = JSON.parse(val);
         if(viewHistory == null){
-          viewHistory = [[locations[0], locations[1], this.searchString, 1, "none"]];
+          viewHistory = [[locations[0], locations[1], this.searchString, this.uniqueCityString, 1, "block", "none"]];
         }else{
           let isIn = 0;
           for(let i = 0; i < viewHistory.length; i++){
             if(viewHistory[i][0] == locations[0] && viewHistory[i][1] == locations[1]){
-              viewHistory[i][3]++;
+              viewHistory[i][4]++;
               isIn = 1;
             }
           }
-          if(isIn == 0) viewHistory.push([locations[0], locations[1], this.searchString, 1, "none"]);
+          if(isIn == 0) viewHistory.push([locations[0], locations[1], this.searchString, this.uniqueCityString, 1, "none", "none"]);
 
           //viewHistory sortieren
           for(let i = 0; i < viewHistory.length; i++){
-            for(let a = 0; a < viewHistory.length-1; a++){
-              if(a > 5) viewHistory[a][4] = "none";
-              else viewHistory[a][4] = "block";
+            for(let a = 0; a < viewHistory.length; a++){
+              if(a > 4) viewHistory[a][5] = "none";
+              else viewHistory[a][5] = "block";
 
-              if(viewHistory[a][3] < viewHistory[a+1][3]){
+              if(viewHistory[a+1] != undefined && viewHistory[a][4] < viewHistory[a+1][4]){
                 let temp = viewHistory[a];
                 viewHistory[a] = viewHistory[a+1];
                 viewHistory[a+1] = temp;
@@ -353,18 +237,21 @@ export class AboutPage {
           }
         }
 
-        this.storage.set('viewHistory', JSON.stringify(viewHistory));
+        this.storage.set('cityList', JSON.stringify(viewHistory));
       });
     }
   }
 
   cityIsInFavorites(){
-    this.storage.get('favorites').then((val) => {
+    this.storage.get('cityList').then((val) => {
       let favorites = JSON.parse(val);
+      if(favorites == null) favorites = [];
 
       let isIn = 0;
       for(let a = 0; a < favorites.length; a++){
-        if(favorites[a][0] == this.locations[0] && favorites[a][1] == this.locations[1]){
+        if(favorites[a][6] == "block" && favorites[a][0] == this.locations[0] && favorites[a][1] == this.locations[1]){
+          isIn = 1;
+        }else if(favorites[a][6] == "block" && this.locations.length == 0 && favorites[a][2] == this.searchString){
           isIn = 1;
         }
       }
@@ -380,30 +267,39 @@ export class AboutPage {
   }
 
   saveAsFavorites(){
-    this.storage.get('favorites').then((val) => {
+    this.storage.get('cityList').then((val) => {
       let favorites = JSON.parse(val);
       if(favorites == null) favorites = [];
-      favorites.push([this.locations[0], this.locations[1], this.searchString]);
-      this.storage.set('favorites', JSON.stringify(favorites));
-         document.querySelector("#deleteFavorites").style.display = "block";
-         document.querySelector("#saveAsFavorites").style.display = "none";
+      for(let a = 0; a < favorites.length; a++){
+        if(favorites[a][0] == this.locations[0] && favorites[a][1] == this.locations[1]){
+          favorites[a][6] = "block";
+        }else if(this.locations.length == 0 && favorites[a][2] == this.searchString){
+          favorites[a][6] = "block";
+        }
+      }
+      //console.log(favorites);
+      this.storage.set('cityList', JSON.stringify(favorites));
+      document.querySelector("#deleteFavorites").style.display = "block";
+      document.querySelector("#saveAsFavorites").style.display = "none";
     });
   }
 
   deleteFavorites(){
-    this.storage.get('favorites').then((val) => {
+    this.storage.get('cityList').then((val) => {
       let favorites = JSON.parse(val);
-      let temp = [];
 
       for(let a = 0; a < favorites.length; a++){
-        if(favorites[a][0] != this.locations[0] && favorites[a][1] != this.locations[1]){
-          temp.push(favorites[a]);
+        if(favorites[a][0] == this.locations[0] && favorites[a][1] == this.locations[1]){
+          favorites[a][6] = "none";
+        }else if(this.locations.length == 0 && favorites[a][2] == this.searchString){
+          favorites[a][6] = "none";
         }
       }
+      //console.log(favorites);
 
-      this.storage.set('favorites', JSON.stringify(temp));
-         document.querySelector("#saveAsFavorites").style.display = "block";
-         document.querySelector("#deleteFavorites").style.display = "none";
+      this.storage.set('cityList', JSON.stringify(favorites));
+      document.querySelector("#saveAsFavorites").style.display = "block";
+      document.querySelector("#deleteFavorites").style.display = "none";
     });
   }
 
@@ -418,6 +314,28 @@ export class AboutPage {
         if(count < 15) this.onclickMode(mode, count);
       }else
         this.loadMap();
+    }, 2000);
+  }
+
+  onclickCountry(countryString, count){
+    if(countryString == undefined){
+      document.querySelector("#errorCountry").style.display = "none";
+      count = 0;
+      countryString = this.country;
+    }
+    setTimeout(()=>{
+      if(countryString.localeCompare(this.country) == 0){
+        count++;
+        if(count < 15) this.onclickCountry(countryString, count);
+        else{
+          document.querySelector("#errorCountry").style.display = "block";
+          setTimeout(()=>{
+            document.querySelector("#errorCountry").style.display = "none";
+          }, 4000);
+        }
+      }else{
+        this.search();
+      }
     }, 2000);
   }
 
