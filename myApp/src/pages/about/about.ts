@@ -19,6 +19,8 @@ declare var google: any;
 
 export class AboutPage {
   settings;
+  weekdays = ["Mon", "Mo", "Tue", "Di", "Wed", "Mi",
+    "Thu", "Do", "Fri", "Fr", "Sat", "Sa", "Sun", "So"];
 
   mode = [{name: "Auto", value: "DRIVING"},
           {name: "Laufen", value: "WALKING"},
@@ -121,8 +123,16 @@ export class AboutPage {
       this.country = "";
       this.countryArray = [];
       let array = [];
+      let weekdaysTemp = this.weekdays;
+
+      //weekday_short von Englisch nach Deutsch ändern
       data.forecast.simpleforecast.forecastday.forEach(function(element) {
-          // console.log(element);
+          let temp = element.date.weekday_short;
+          for(let i = 0; i < weekdaysTemp.length; i = i+2){
+            if(element.date.weekday_short.localeCompare(weekdaysTemp[i]) == 0){
+              element.date.weekday_short = weekdaysTemp[1+i];
+            }
+          }
           array.push(element);
       });
       this.weatherArray = array;
@@ -224,7 +234,7 @@ export class AboutPage {
 
           //viewHistory sortieren
           for(let i = 0; i < viewHistory.length; i++){
-            for(let a = 0; a < viewHistory.length; a++){
+            for(let a = 0; a < viewHistory.length-i; a++){
               if(a > 4) viewHistory[a][5] = "none";
               else viewHistory[a][5] = "block";
 

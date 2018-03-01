@@ -12,13 +12,14 @@
         Wilkommen zu Shorties!
       </ion-card-title>
       <p>
-        Hier können Sie sich Kurztrips erstellen, indem Sie einen Stadtnamen eingeben.
+        Hier kannst Du Dir Kurztrips erstellen, indem Du unten auf Suchen klickst
+        und anschießend eine Stadt eingibst.
         <br>
         <br>
-        Es wird Ihnen das Wetter der nächsten Tage, die kürzeste Route mit dem Auto und die
+        Es wird Dir das Wetter der nächsten Tage, die kürzeste Route mit dem Auto und die
         Hotels, Hostels und Restaurants in der gesuchten Stadt angezeigt.
         <br>
-        Um schnell an Ihre Favoriten zu kommen, klicken Sie einfach auf den Namen der Stadt.
+        Um schnell an Deine Favoriten oder meistgesuchten Städte zu kommen, klick einfach auf den Namen der Stadt.
         <br>
       </p>
     </ion-card-content>
@@ -32,13 +33,13 @@
       <ion-item *ngFor="let favorites of favorites" (click)="openSearchPage(favorites)" [style.display]="favorites[6]">
         <p>{{favorites[2]}} <ion-icon name="star" style="float: right;color: #488aff;"></ion-icon></p>
       </ion-item>
-      <p id="noFavorites">Sie haben noch keine Favoriten hinzugefügt.</p>
+      <p id="noFavorites">Du hast noch keinen Favoriten hinzugefügt.</p>
     </ion-card-content>
   </ion-card>
 
   <ion-card id="mostWanted">
     <ion-card-header>
-        Meistgesuchte Städte
+        Deine meistgesuchte Städte
     </ion-card-header>
     <ion-card-content>
       <ion-item *ngFor="let viewHistory of viewHistory" [style.display]="viewHistory[5]" (click)="openSearchPage(viewHistory)">
@@ -46,7 +47,7 @@
           <ion-icon name="star" style="float: right;color: #488aff;" [style.display]="viewHistory[6]"></ion-icon>
         </p>
       </ion-item>
-      <p id="noHistory">Sie haben noch nach keiner Stadt gesucht.</p>
+      <p id="noHistory">Du hast noch nach keiner Stadt gesucht.</p>
     </ion-card-content>
   </ion-card>
 </ion-content>

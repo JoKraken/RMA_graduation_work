@@ -63,7 +63,7 @@ export class CityDetailsPage {
 
         var marker = new google.maps.Marker({
           map: this.map,
-          title: "test",
+          title: this.itemsMap[i].name,
           animation: google.maps.Animation.DROP,
           position: latLng
         });

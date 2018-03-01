@@ -29,12 +29,13 @@
           Informationen zu {{searchString}}
         </ion-card-header>
         <ion-card-content>
-          <p>Klicke hier um Informationen zu dieser Stadt bei Wikipedia zu erhalten: <br>
+          <p>Klicke auf den Städtenamen um Informationen zu dieser Stadt bei Wikipedia zu erhalten: <br>
             <a href="https://de.wikipedia.org/w/index.php?title=Spezial:Suche&search={{searchString}}" target="_blank">{{searchString}}</a>
           </p>
-          <button ion-item (click)="openCityDetailsPage(locations)" icon-start>
-            Vorschläge für Hotels und Hostels
-          </button>
+          <div (click)="openCityDetailsPage(locations)" style="margin-top: 18px;white-space: normal;" icon-start>
+            Für Vorschläge für Hotels, Hostels und Restaurants bitte
+            <a>hier</a> klicken
+          </div>
         </ion-card-content>
       </ion-card>
 
@@ -44,7 +45,7 @@
         </ion-card-header>
         <ion-card-content>
           <div *ngFor="let weather of weatherArray" class="weather weatherNotFirst">
-            <p style="width: 60px; font-size: 26px;margin: 0px 5%;">
+            <p class="weatherFirst">
               {{weather.date.weekday_short}}
             </p>
             <img src="{{weather.icon_url}}" style="max-width: 77px;">
@@ -55,7 +56,11 @@
               {{weather.low.celsius}} °C
             </p>
             <div  class="additive" style="font-size: 15px;margin: 0px 5%;color: #bababa !important; display: none">
-              <p class="temp" style="display: inline-block;">{{weather.high.celsius}} °C <br> {{weather.low.celsius}} °C </p>
+              <div style="display: inline-table;">
+                <p class="temp" style="display: inline-block;">{{weather.high.celsius}} °C </p>
+                  <br>
+                <div class="temp templow" style="margin: 0;display: inline-block;">{{weather.low.celsius}} °C </div>
+              </div>
               <p style="float: right;display: inline-block;">
                 Niederschlag: {{weather.pop}} % <br>
                 Luftfeuchtigkeit: {{weather.avehumidity}} % <br>
@@ -91,9 +96,9 @@
         <ion-card-content>
           <div id="routeSettings">
             Distanz:  {{routeString}}
-            <button ion-item (click)="openMapDetailsPage(routeDetails)" icon-start>
-              Details der Route
-            </button>
+            <div (click)="openMapDetailsPage(routeDetails)" style="margin-top: 18px;white-space: normal;" icon-start>
+              Für Details der Route bitte <a>hier</a> klicken
+            </div>
           </div>
           <div id="noResults">
             Es wurde keine Route gefunden. Bitte probieren Sie es mit einem anderen Fortbewegungsmittel.
