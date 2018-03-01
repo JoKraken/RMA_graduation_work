@@ -10,7 +10,7 @@ import { CityDetailsPage } from '../about/city-details';
 import { MapDetailsPage } from '../about/maps-details';
 
 
-declare var google: any;
+declare let google: any;
 
 @Component({
   selector: 'page-about',
@@ -56,32 +56,36 @@ export class AboutPage {
     if(params.data.item != undefined){
       this.searchString = params.data.item[2];
       this.country = params.data.item[3];
-      this.location = [params.data.item[0], params.data.item[1]];
+      this.locations = [params.data.item[0], params.data.item[1]];
       setTimeout(()=>{
-        document.querySelector("#title").style.display = "none";
-        document.querySelector("#search").style.display = "none";
-        document.querySelector("#title_String").style.display = "block";
-        this.searchHelp(this.countSearch);
+        this.displayHelper("#title", "none");
+        this.displayHelper("#search", "none");
+        this.displayHelper("#title_String", "block");
+        this.searchHelp(this.countSearch, undefined);
       }, params, 10);
     }
+  }
+
+  displayHelper(what, display){
+    let elem = <HTMLElement>document.querySelector(what);
+    elem.style.display = display;
   }
 
   getSettings(){
     this.storage.get('settings').then((val) => {
       this.settings = JSON.parse(val);
       if(this.settings!= null && this.settings.gps){
-        document.querySelector("#noGPS").style.display = "none";
-        document.querySelector("#GPS").style.display = "block";
+        this.displayHelper("#noGPS", "none");
+        this.displayHelper("#GPS", "block");
       }else{
-        document.querySelector("#GPS").style.display = "none";
-        document.querySelector("#noGPS").style.display = "block";
+        this.displayHelper("#GPS", "none");
+        this.displayHelper("#noGPS", "block");
       }
     });
   }
 
   search(ev: any){
-    let elem = <HTMLElement>document.querySelector("#errorCountry");
-    elem.style.display = "none";
+    this.displayHelper("#errorCountry", "none");
     this.countSearch++;
     setTimeout(()=>{
       this.searchHelp(this.countSearch, ev);
@@ -90,11 +94,10 @@ export class AboutPage {
 
   searchHelp(param, ev: any){
     if(param == this.countSearch && document.querySelector(".country") != undefined
-      && document.querySelector(".country").style != undefined
     ){
       this.countSearch = 0;
-      document.querySelector(".country").style.display = "none";
-      document.querySelector("#weather").style.display = "none";
+      this.displayHelper(".country", "none");
+      this.displayHelper("#weather", "none");
       if(ev != undefined)this.searchString = ev.target.value;
 
       let url = "";
@@ -127,7 +130,6 @@ export class AboutPage {
 
       //weekday_short von Englisch nach Deutsch ändern
       data.forecast.simpleforecast.forecastday.forEach(function(element) {
-          let temp = element.date.weekday_short;
           for(let i = 0; i < weekdaysTemp.length; i = i+2){
             if(element.date.weekday_short.localeCompare(weekdaysTemp[i]) == 0){
               element.date.weekday_short = weekdaysTemp[1+i];
@@ -136,18 +138,23 @@ export class AboutPage {
           array.push(element);
       });
       this.weatherArray = array;
-      document.querySelector("#weather").style.display = "block";
+      this.displayHelper("#weather", "block");
       this.loadMap();
-      setTimeout(function () {
-        document.querySelector(".weather").classList.remove("weatherNotFirst");
-        document.querySelector(".weather").classList.add("weatherFirst");
-        document.querySelector(".additive").style.display = "block";
-        document.querySelector(".temp").style.display = "none";
-        document.querySelector(".templow").style.display = "none";
-      }, 50);
+      console.log(this);
+      setTimeout(this.searchHelpInnerRequestTimeout, 50);
     }else if(data.response.results != undefined && data.response.results[0].name != undefined){
       this.countryArray = data.response.results;
-      if(this.countryArray.length != 0) document.querySelector(".country").style.display = "block";
+      if(this.countryArray.length != 0) this.displayHelper(".country", "block");
+    }
+  }
+
+  searchHelpInnerRequestTimeout(){
+    if(this.displayHelper){
+      document.querySelector(".weather").classList.remove("weatherNotFirst");
+      document.querySelector(".weather").classList.add("weatherFirst");
+      this.displayHelper(".additive", "block");
+      this.displayHelper(".temp", "none");
+      this.displayHelper(".templow", "none");
     }
   }
 
@@ -191,22 +198,22 @@ export class AboutPage {
             travelMode: google.maps.TravelMode[this.modeString] //TRANSIT
         }, (res, status) => {
             if(status == google.maps.DirectionsStatus.OK){
-              document.querySelector("#noResults").style.display = "none";
-              document.querySelector("#routeSettings").style.display = "block";
+                this.displayHelper("#routeSettings", "block");
+                this.displayHelper("#noResults", "none");
                 //console.log(res.routes[0].legs[0]);
                 this.routeString = res.routes[0].legs[0].distance.text+" ("+res.routes[0].legs[0].duration.text+")";
                 this.routeDetails = res.routes[0].legs[0];
                 directionsDisplay.setDirections(res);
             } else {
                 console.warn(status);
-                document.querySelector("#routeSettings").style.display = "none";
-                document.querySelector("#noResults").style.display = "block";
+                this.displayHelper("#routeSettings", "none");
+                this.displayHelper("#noResults", "block");
             }
             this.addViewHistory(this.locations);
         });
       }else{
-        document.querySelector("#routeSettings").style.display = "none";
-        document.querySelector("#noResults").style.display = "block";
+        this.displayHelper("#routeSettings", "none");
+        this.displayHelper("#noResults", "block");
       }
     },
     error => {
@@ -232,24 +239,34 @@ export class AboutPage {
           }
           if(isIn == 0) viewHistory.push([locations[0], locations[1], this.searchString, this.uniqueCityString, 1, "none", "none"]);
 
-          //viewHistory sortieren
-          for(let i = 0; i < viewHistory.length; i++){
-            for(let a = 0; a < viewHistory.length-i; a++){
-              if(a > 4) viewHistory[a][5] = "none";
-              else viewHistory[a][5] = "block";
-
-              if(viewHistory[a+1] != undefined && viewHistory[a][4] < viewHistory[a+1][4]){
-                let temp = viewHistory[a];
-                viewHistory[a] = viewHistory[a+1];
-                viewHistory[a+1] = temp;
-              }
-            }
-          }
+          viewHistory = this.sortViewHistory(viewHistory);
+          console.log(viewHistory);
         }
 
         this.storage.set('cityList', JSON.stringify(viewHistory));
       });
     }
+  }
+
+  //viewHistory sortieren mit Bubblesort
+  //viewHistory = [lat, lng, cityname, uniqueCityString, count, firstFive, favorites]
+  sortViewHistory(viewHistory){
+    let sort = true;
+    while(sort){
+      sort = false;
+      for(let a = 0; a < viewHistory.length; a++){
+        if(a > 4) viewHistory[a][5] = "none";
+        else viewHistory[a][5] = "block";
+
+        if(viewHistory[a+1] != undefined && viewHistory[a][4] < viewHistory[a+1][4]){
+          let temp = viewHistory[a];
+          viewHistory[a] = viewHistory[a+1];
+          viewHistory[a+1] = temp;
+          sort = true;
+        }
+      }
+    }
+    return viewHistory;
   }
 
   cityIsInFavorites(){
@@ -267,11 +284,11 @@ export class AboutPage {
       }
 
       if(isIn == 0){
-         document.querySelector("#saveAsFavorites").style.display = "block";
-         document.querySelector("#deleteFavorites").style.display = "none";
+         this.displayHelper("#deleteFavorites", "none");
+         this.displayHelper("#saveAsFavorites", "block");
       }else{
-         document.querySelector("#deleteFavorites").style.display = "block";
-         document.querySelector("#saveAsFavorites").style.display = "none";
+         this.displayHelper("#deleteFavorites", "block");
+         this.displayHelper("#saveAsFavorites", "none");
       }
     });
   }
@@ -289,8 +306,8 @@ export class AboutPage {
       }
       //console.log(favorites);
       this.storage.set('cityList', JSON.stringify(favorites));
-      document.querySelector("#deleteFavorites").style.display = "block";
-      document.querySelector("#saveAsFavorites").style.display = "none";
+      this.displayHelper("#deleteFavorites", "block");
+      this.displayHelper("#saveAsFavorites", "none");
     });
   }
 
@@ -308,8 +325,8 @@ export class AboutPage {
       //console.log(favorites);
 
       this.storage.set('cityList', JSON.stringify(favorites));
-      document.querySelector("#saveAsFavorites").style.display = "block";
-      document.querySelector("#deleteFavorites").style.display = "none";
+      this.displayHelper("#deleteFavorites", "none");
+      this.displayHelper("#saveAsFavorites", "block");
     });
   }
 
@@ -321,7 +338,7 @@ export class AboutPage {
     setTimeout(()=>{
       if(mode.localeCompare(this.modeString) == 0){
         count++;
-        if(count < 15) this.onclickMode(mode, count);
+        if(count < 16) this.onclickMode(mode, count);
       }else
         this.loadMap();
     }, 2000);
@@ -329,7 +346,7 @@ export class AboutPage {
 
   onclickCountry(countryString, count){
     if(countryString == undefined){
-      document.querySelector("#errorCountry").style.display = "none";
+       this.displayHelper("#errorCountry", "none");
       count = 0;
       countryString = this.country;
     }
@@ -338,13 +355,13 @@ export class AboutPage {
         count++;
         if(count < 15) this.onclickCountry(countryString, count);
         else{
-          document.querySelector("#errorCountry").style.display = "block";
+          this.displayHelper("#errorCountry", "block");
           setTimeout(()=>{
-            document.querySelector("#errorCountry").style.display = "none";
+            this.displayHelper("#errorCountry", "none");
           }, 4000);
         }
       }else{
-        this.search();
+        this.search(undefined);
       }
     }, 2000);
   }

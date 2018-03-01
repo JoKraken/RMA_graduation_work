@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, AlertController  } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
 import { AboutPage  } from '../about/about';
@@ -16,24 +16,53 @@ export class HomePage {
 
   constructor(
     public nav: NavController,
+    private alertCtrl: AlertController,
     private storage: Storage
   ) {
     this.storage.get('settings').then((val) => {
       this.settings = JSON.parse(val);
       if(this.settings == null){
-        //console.log(settings);
-        this.settings = {gps: true, viewHistory: true};
-
-        this.storage.set('settings', JSON.stringify(this.settings));
+        //console.log(this.settings);
+        this.settings = {viewHistory: true, gps: null};
+        let alert = this.alertCtrl.create({
+          title: 'GPS-Zugriff',
+          message: 'Darf Shorties auf deine GPS-Daten zugreifen?',
+          buttons: [
+            {
+              text: 'Nein',
+              role: 'Nein',
+              handler: () => {
+                this.settingsAlert(false);
+              }
+            },
+            {
+              text: 'Ja',
+              handler: () => {
+                this.settingsAlert(true);
+              }
+            }
+          ]
+        });
+        alert.present();
       }
 
       if(this.settings.viewHistory){
-        document.querySelector("#mostWanted").style.display = "block";
+        this.displayHelper("#mostWanted", "block");
         this.getViewHistory();
       }else{
-        document.querySelector("#mostWanted").style.display = "none";
+        this.displayHelper("#mostWanted", "none");
       }
     });
+  }
+
+  settingsAlert(gps){
+    this.settings = {gps: false, viewHistory: true};
+    this.storage.set('settings', JSON.stringify(this.settings));
+  }
+
+  displayHelper(what, display){
+    let elem = <HTMLElement>document.querySelector(what);
+    elem.style.display = display;
   }
 
   ionViewWillEnter(){
@@ -45,8 +74,8 @@ export class HomePage {
     this.storage.get('cityList').then((val) => {
       this.viewHistory = JSON.parse(val);
       //console.log(this.viewHistory);
-      if(this.viewHistory != null) document.querySelector("#noHistory").style.display = "none";
-      else document.querySelector("#noHistory").style.display = "block";
+      if(this.viewHistory != null) this.displayHelper("#noHistory", "none");
+      else this.displayHelper("#noHistory", "block");
     });
   }
 
@@ -61,9 +90,9 @@ export class HomePage {
           }
         }
       }
-      console.log(this.favorites);
-      if(this.favorites != null && this.favorites.length != 0) document.querySelector("#noFavorites").style.display = "none";
-      else document.querySelector("#noFavorites").style.display = "block";
+
+      if(this.favorites != null && this.favorites.length != 0) this.displayHelper("#noFavorites", "none");
+      else this.displayHelper("#noFavorites", "block");
     });
   }
 

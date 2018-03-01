@@ -1,11 +1,11 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
-import { Storage } from '@ionic/storage';
+import { NavParams } from 'ionic-angular';
 
 import { Observable } from 'rxjs/Observable';
 import { HttpClient } from '@angular/common/http';
-import { Geolocation } from '@ionic-native/geolocation';
 
+
+declare let google: any;
 
 @Component({
   selector: 'city-details',
@@ -61,7 +61,7 @@ export class CityDetailsPage {
       for(let i = 0; i < this.itemsMap.length; i++){
         let latLng = new google.maps.LatLng(this.itemsMap[i].location.lat, this.itemsMap[i].location.lng);
 
-        var marker = new google.maps.Marker({
+        new google.maps.Marker({
           map: this.map,
           title: this.itemsMap[i].name,
           animation: google.maps.Animation.DROP,
