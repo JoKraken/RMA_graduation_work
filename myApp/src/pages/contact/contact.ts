@@ -26,9 +26,14 @@ export class ContactPage {
     });
   }
 
-  ionViewWillLeave(){
-    console.log("test");
-    let settings = {gps: this.gps, viewHistory: this.viewHistory};
+  ionViewWillLeave(){}
+
+  onclickSettings(art){
+    let settings;
+    console.log(art);
+    if(art == 0) settings = {gps: this.gps, viewHistory: this.viewHistory};
+    else settings = {gps: this.gps, viewHistory: this.viewHistory};
+    console.log(settings);
     this.storage.set('settings', JSON.stringify(settings));
   }
 

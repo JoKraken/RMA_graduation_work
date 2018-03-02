@@ -15,6 +15,22 @@ ion-select{
   height: 400px;
 }
 
+.additive{
+  font-size: 15px;
+  margin: 0px 5%;
+  color: #bababa !important;
+  display: none;
+}
+
+.additiveLow{
+  margin: 0;
+  display: inline-block;
+}
+
+.tempInfo{
+  float: right;
+  display: inline-block;
+}
 
 .country{
   display: none;
@@ -44,4 +60,17 @@ ion-select{
 
 .templow{
   color: #bababa !important;
+}
+
+.white-space{
+  white-space: normal;
+}
+
+.buttonCrates{
+  margin-top: 18px;
+  white-space: normal;
+}
+
+#errorCountry{
+  padding-left: 16px; display: none
 }

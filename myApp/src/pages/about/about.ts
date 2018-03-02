@@ -36,6 +36,7 @@ export class AboutPage {
   directionsDisplay;
   routeDetails;
   geoURL = "";
+  hotels = [];
 
   countSearch = 0;
   country = "";
@@ -96,6 +97,7 @@ export class AboutPage {
     if(param == this.countSearch && document.querySelector(".country") != undefined
     ){
       this.countSearch = 0;
+      this.displayHelper(".hotels", "none");
       this.displayHelper(".country", "none");
       this.displayHelper("#weather", "none");
       if(ev != undefined)this.searchString = ev.target.value;
@@ -138,23 +140,10 @@ export class AboutPage {
           array.push(element);
       });
       this.weatherArray = array;
-      this.displayHelper("#weather", "block");
       this.loadMap();
-      console.log(this);
-      setTimeout(this.searchHelpInnerRequestTimeout, 50);
     }else if(data.response.results != undefined && data.response.results[0].name != undefined){
       this.countryArray = data.response.results;
       if(this.countryArray.length != 0) this.displayHelper(".country", "block");
-    }
-  }
-
-  searchHelpInnerRequestTimeout(){
-    if(this.displayHelper){
-      document.querySelector(".weather").classList.remove("weatherNotFirst");
-      document.querySelector(".weather").classList.add("weatherFirst");
-      this.displayHelper(".additive", "block");
-      this.displayHelper(".temp", "none");
-      this.displayHelper(".templow", "none");
     }
   }
 
@@ -192,6 +181,7 @@ export class AboutPage {
       if(data.location != undefined && this.searchString.toLowerCase().localeCompare(data.location.city.toLowerCase()) == 0) this.searchString = data.location.city;
       if(data.location != undefined){
         this.locations = [data.location.lat, data.location.lon];
+        this.getHotelInfo();
         directionsService.route({
             origin: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
             destination: new google.maps.LatLng(data.location.lat, data.location.lon),
@@ -222,6 +212,31 @@ export class AboutPage {
 
   }
 
+  getHotelInfo(){
+    let params = 'v=20161017&ll='+this.locations[0]+'%2C'+this.locations[1]+'&query=Hotel&limit=3'
+    +'&intent=checkin&client_id=BCUJZ2MSKUWJC2Q5HVIYZLHRWGFJ2OFPKPLBP1NOBNR3VW5R'
+    +'&client_secret=Q10HUP5APBQOYNTPABSH4CSKRGEAI2CXIYULYGG0EZYUUWUZ';
+
+    this.request = this.httpClient.get('https://api.foursquare.com/v2/venues/search?'+params);
+    this.request.subscribe(data => {
+      //console.log(data.response.venues);
+      this.hotels = data.response.venues;
+      this.displayHelper(".hotels", "block");
+      this.displayWeather();
+     })
+  }
+
+  displayWeather(){
+    if(this.displayHelper){
+      this.displayHelper("#weather", "block");
+      document.querySelector(".weather").classList.remove("weatherNotFirst");
+      document.querySelector(".weather").classList.add("weatherFirst");
+      this.displayHelper(".additive", "block");
+      this.displayHelper(".temp", "none");
+      this.displayHelper(".templow", "none");
+    }
+  }
+
   //cityList = [lat, lng, cityname, uniqueCityString, count, firstFive, favorites]
   addViewHistory(locations){
     if(this.settings.viewHistory){
@@ -240,7 +255,7 @@ export class AboutPage {
           if(isIn == 0) viewHistory.push([locations[0], locations[1], this.searchString, this.uniqueCityString, 1, "none", "none"]);
 
           viewHistory = this.sortViewHistory(viewHistory);
-          console.log(viewHistory);
+          //console.log(viewHistory);
         }
 
         this.storage.set('cityList', JSON.stringify(viewHistory));

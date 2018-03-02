@@ -90,5 +90,5 @@
     </plugin>
     <plugin name="cordova-plugin-nativegeocoder" spec="^2.0.5" />
     <engine name="browser" spec="5.0.3" />
-    <engine name="android" spec="7.0.0" />
+    <engine name="android" spec="6.4.0" />
 </widget>

@@ -31,7 +31,7 @@
     </ion-card-header>
     <ion-card-content>
       <ion-item *ngFor="let favorites of favorites" (click)="openSearchPage(favorites)" [style.display]="favorites[6]">
-        <p>{{favorites[2]}} <ion-icon name="star" style="float: right;color: #488aff;"></ion-icon></p>
+        <p>{{favorites[2]}} <ion-icon name="star" class="star"></ion-icon></p>
       </ion-item>
       <p id="noFavorites">Du hast noch keinen Favoriten hinzugefügt.</p>
     </ion-card-content>
@@ -44,7 +44,7 @@
     <ion-card-content>
       <ion-item *ngFor="let viewHistory of viewHistory" [style.display]="viewHistory[5]" (click)="openSearchPage(viewHistory)">
         <p>{{viewHistory[4]}}: {{viewHistory[2]}}
-          <ion-icon name="star" style="float: right;color: #488aff;" [style.display]="viewHistory[6]"></ion-icon>
+          <ion-icon name="star" class="star" [style.display]="viewHistory[6]"></ion-icon>
         </p>
       </ion-item>
       <p id="noHistory">Du hast noch nach keiner Stadt gesucht.</p>

@@ -37,9 +37,9 @@ import { NativeGeocoder } from '@ionic-native/native-geocoder';
     IonicModule.forRoot(MyApp,
     {
        links: [
-          // { component: CityDetailsPage, name: 'CityDetailsPage', segment: 'city-details' },
-          // { component: MapDetailsPage, name: 'MapDetailsPage', segment: 'maps-details' },
-          // { component: AboutPage, name: 'AboutPage', segment: 'page-about' }
+          { component: CityDetailsPage, name: 'CityDetailsPage', segment: 'city-details' },
+          { component: MapDetailsPage, name: 'MapDetailsPage', segment: 'maps-details' },
+          { component: AboutPage, name: 'AboutPage', segment: 'page-about' }
        ]
     }),
     IonicStorageModule.forRoot()

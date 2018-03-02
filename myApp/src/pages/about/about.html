@@ -20,7 +20,7 @@
           <ion-option *ngFor="let country of countryArray" value="/{{country.l}}">{{country.country_name}} ({{country.state}})</ion-option>
         </ion-select>
       </ion-item>
-      <p id="errorCountry" style="padding-left: 16px; display: none">Es ist ein Fehler aufgetrehten, bitte versuchen Sie es später nocheinmal!</p>
+      <p id="errorCountry">Es ist ein Fehler aufgetrehten, bitte versuchen Sie es später nocheinmal!</p>
     </div>
 
     <div id="weather" class="item-block" style="display:none">
@@ -30,11 +30,24 @@
         </ion-card-header>
         <ion-card-content>
           <p>Klicke auf den Städtenamen um Informationen zu dieser Stadt bei Wikipedia zu erhalten: <br>
-            <a href="https://de.wikipedia.org/w/index.php?title=Spezial:Suche&search={{searchString}}" target="_blank">{{searchString}}</a>
+            <a href="https://de.wikipedia.org/w/index.php?title=Spezial:Suche&search={{searchString}}" target="_blank">{{searchString}}</a> <br><br>
           </p>
-          <div (click)="openCityDetailsPage(locations)" style="margin-top: 18px;white-space: normal;" icon-start>
-            Für Vorschläge für Hotels, Hostels und Restaurants bitte
-            <a>hier</a> klicken
+          <div class="hotels">
+            <div style="font-size: 1.6rem;">
+              Hotels in und um {{searchString}}
+            </div>
+            <ion-item *ngFor="let hotel of hotels">
+              {{hotel.name}}
+              <div>
+                <p class="white-space">Telefonnummmer: {{hotel.contact.formattedPhone}}</p>
+                <p class="white-space">Adresse: {{hotel.location.formattedAddress[0]}}, {{hotel.location.formattedAddress[1]}}</p>
+                <p class="white-space">Website: <a href="{{hotel.url}}" target="_blank">{{hotel.url}}</a></p>
+              </div>
+            </ion-item>
+            <div class="buttonCrates" (click)="openCityDetailsPage(locations)"icon-start>
+              Für weitere Vorschläge für Hotels, Hostels und Restaurants bitte
+              <a>hier</a> klicken
+            </div>
           </div>
         </ion-card-content>
       </ion-card>
@@ -55,13 +68,13 @@
             <p class="temp templow">
               {{weather.low.celsius}} °C
             </p>
-            <div  class="additive" style="font-size: 15px;margin: 0px 5%;color: #bababa !important; display: none">
+            <div class="additive">
               <div style="display: inline-table;">
                 <p class="temp" style="display: inline-block;">{{weather.high.celsius}} °C </p>
                   <br>
-                <div class="temp templow" style="margin: 0;display: inline-block;">{{weather.low.celsius}} °C </div>
+                <div class="temp templow additiveLow">{{weather.low.celsius}} °C </div>
               </div>
-              <p style="float: right;display: inline-block;">
+              <p class="tempInfo">
                 Niederschlag: {{weather.pop}} % <br>
                 Luftfeuchtigkeit: {{weather.avehumidity}} % <br>
                 Wind: {{weather.avewind.kph}} km/h
