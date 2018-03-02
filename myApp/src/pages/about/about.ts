@@ -86,6 +86,7 @@ export class AboutPage {
   }
 
   search(ev: any){
+    this.displayHelper(".noCityFound", "none");
     this.displayHelper("#errorCountry", "none");
     this.countSearch++;
     setTimeout(()=>{
@@ -110,7 +111,10 @@ export class AboutPage {
       this.request
       .subscribe(data => {
         //console.log(data);
-        this.searchHelpInnerRequest(data);
+        if(data.forecast != undefined) this.searchHelpInnerRequest(data);
+        else this.displayHelper(".noCityFound", "block");
+       }, (err) => {
+         console.log(err);
        })
     }
   }
@@ -149,7 +153,7 @@ export class AboutPage {
 
   loadMap(){
     this.cityIsInFavorites();
-    if(this.settings != null && this.settings.gps){
+    if(this.settings != null){
       this.geolocation.getCurrentPosition().then((position) => {
         let latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 

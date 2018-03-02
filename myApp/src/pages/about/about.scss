@@ -20,6 +20,7 @@ ion-select{
   margin: 0px 5%;
   color: #bababa !important;
   display: none;
+  text-align: left;
 }
 
 .additiveLow{
@@ -36,8 +37,12 @@ ion-select{
   display: none;
 }
 
+.noCityFound{
+  display: none;
+}
+
 .weather{
-  min-width: 97.3px;
+  min-width: 90.3px;
   padding: 10px;
   border-bottom: 1px solid #ccc!important;
 }
@@ -48,12 +53,13 @@ ion-select{
 }
 
 .weatherNotFirst{
-  display: inline-block;
   text-align: center;
+  display: inline-block;
 }
 
 .temp{
   max-width: 60px;
+  min-width: 38px;
   font-size: 18px !important;
   margin: 0px 5%;
 }

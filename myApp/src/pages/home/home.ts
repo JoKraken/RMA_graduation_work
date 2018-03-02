@@ -56,7 +56,8 @@ export class HomePage {
   }
 
   settingsAlert(gps){
-    this.settings = {gps: false, viewHistory: true};
+    this.settings = {gps: gps, viewHistory: true};
+    console.log(this.settings);
     this.storage.set('settings', JSON.stringify(this.settings));
   }
 

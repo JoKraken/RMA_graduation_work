@@ -9,13 +9,13 @@
 <ion-content>
 
   <ion-card>
-    <ion-item>
+    <ion-item (click)="onclickSettings()">
       <ion-label>GPS-Position</ion-label>
-      <ion-toggle [(ngModel)]="gps" (click)="onclickSettings(0)"></ion-toggle>
+      <ion-toggle [(ngModel)]="gps" (click)="onclickSettings()"></ion-toggle>
     </ion-item>
-    <ion-item>
+    <ion-item (click)="onclickSettings()">
       <ion-label class="white-space">Soll der Suchverlauf gespeichert werden?</ion-label>
-      <ion-toggle [(ngModel)]="viewHistory" (click)="onclickSettings(1)"></ion-toggle>
+      <ion-toggle [(ngModel)]="viewHistory" (click)="onclickSettings()"></ion-toggle>
     </ion-item>
     <ion-item>
       <p class="white-space">Bitte lade die App nach Änderung der Einstellungen neu, damit die Änderungen erfasst werden können.</p>

@@ -12,6 +12,12 @@
 
     <ion-searchbar id="search" (ionInput)="search($event)">Stadt...</ion-searchbar>
 
+    <ion-card class="noCityFound">
+      <ion-card-content>
+        Es wurde keine Stadt mit dem Namen gefunden
+      </ion-card-content>
+    </ion-card>
+
     <div class="country">
       <p style="padding-left: 16px;">Bitte wähle ein Land aus</p>
       <ion-item>
@@ -39,9 +45,9 @@
             <ion-item *ngFor="let hotel of hotels">
               {{hotel.name}}
               <div>
-                <p class="white-space">Telefonnummmer: {{hotel.contact.formattedPhone}}</p>
-                <p class="white-space">Adresse: {{hotel.location.formattedAddress[0]}}, {{hotel.location.formattedAddress[1]}}</p>
-                <p class="white-space">Website: <a href="{{hotel.url}}" target="_blank">{{hotel.url}}</a></p>
+                <p>Telefonnummmer: {{hotel.contact.formattedPhone}}</p>
+                <p>Adresse: {{hotel.location.formattedAddress[0]}}, {{hotel.location.formattedAddress[1]}}</p>
+                <p>Website: <a href="{{hotel.url}}" target="_blank">{{hotel.url}}</a></p>
               </div>
             </ion-item>
             <div class="buttonCrates" (click)="openCityDetailsPage(locations)"icon-start>
@@ -58,7 +64,7 @@
         </ion-card-header>
         <ion-card-content>
           <div *ngFor="let weather of weatherArray" class="weather weatherNotFirst">
-            <p class="weatherFirst">
+            <p class="weatherFirst" style="margin-left: 12% !important;">
               {{weather.date.weekday_short}}
             </p>
             <img src="{{weather.icon_url}}" style="max-width: 77px;">
